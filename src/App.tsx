@@ -1,8 +1,9 @@
+import Register from "./components/Register"
 
 
 const App = () => {
   return (
-    <div>App</div>
+    <Register />
   )
 }
 
