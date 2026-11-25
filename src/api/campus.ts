@@ -1,33 +1,36 @@
 import { http } from './client';
 import type {
-  LoginResponse, RegisterResponse, Paginated, Activity,
-  Enrollment, ExperienceLevel,
+  Activity,
+  Enrollment,
+  ExperienceLevel,
+  LoginResponse,
+  Paginated,
+  RegisterResponse,
 } from '../types/types';
 
 export const authApi = {
-  login: async (email: string, password: string): Promise<LoginResponse> =>
-    (await http.post<LoginResponse>('/api/auth/login', { email, password })).data,
+  login: (email: string, password: string): Promise<LoginResponse> =>
+    http.post<LoginResponse>('/auth/login', { email, password }).then((response) => response.data),
 
-  // ⚠️ orden: name, email, password (coincide con el contrato)
-  register: async (name: string, email: string, password: string): Promise<RegisterResponse> =>
-    (await http.post<RegisterResponse>('/api/auth/register', { name, email, password })).data,
+  register: (name: string, email: string, password: string): Promise<RegisterResponse> =>
+    http.post<RegisterResponse>('/auth/register', { name, email, password }).then((response) => response.data),
 };
 
 export const activitiesApi = {
-  listar: async (page: number, size: number): Promise<Paginated<Activity>> =>
-    (await http.get<Paginated<Activity>>('/api/activities', { params: { page, size } })).data,
+  list: (page: number, size: number): Promise<Paginated<Activity>> =>
+    http.get<Paginated<Activity>>('/activities', { params: { page, size } }).then((response) => response.data),
 
-  detalle: async (id: number): Promise<Activity> =>
-    (await http.get<Activity>(`/api/activities/${id}`)).data,
+  detail: (id: number): Promise<Activity> =>
+    http.get<Activity>(`/activities/${id}`).then((response) => response.data),
 
-  inscribirse: async (id: number, experienceLevel: ExperienceLevel): Promise<Enrollment> =>
-    (await http.post<Enrollment>(`/api/activities/${id}/enrollments`, { experienceLevel })).data,
+  enroll: (id: number, experienceLevel: ExperienceLevel): Promise<Enrollment> =>
+    http.post<Enrollment>(`/activities/${id}/enrollments`, { experienceLevel }).then((response) => response.data),
 };
 
 export const enrollmentsApi = {
-  misInscripciones: async (): Promise<Enrollment[]> =>
-    (await http.get<Enrollment[]>('/api/me/enrollments')).data,
+  mine: (): Promise<Enrollment[]> =>
+    http.get<Enrollment[]>('/me/enrollments').then((response) => response.data),
 
-  retirar: async (id: number): Promise<Enrollment> =>
-    (await http.patch<Enrollment>(`/api/enrollments/${id}/withdraw`)).data,
+  withdraw: (id: number): Promise<Enrollment> =>
+    http.patch<Enrollment>(`/enrollments/${id}/withdraw`).then((response) => response.data),
 };
